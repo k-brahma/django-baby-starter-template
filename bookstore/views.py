@@ -3,7 +3,9 @@ from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.views.decorators.csrf import csrf_exempt
 
-stripe.api_key = 'あなたの秘密鍵'
+from config import settings
+
+stripe.api_key = settings.STRIPE_KEY_SECRET
 
 
 def checkout(request):
@@ -21,7 +23,7 @@ def cancel(request):
 @csrf_exempt
 def create_checkout_session(request):
     MY_DOMAIN = f'{request.scheme}://{request.get_host()}'
-    PRICE_ID = "あなたの値段ID"
+    PRICE_ID = "price_1QLgOXJt0UbzYBEEdbsoB3zx"  # "あなたの値段ID"
     try:
         checkout_session = stripe.checkout.Session.create(
             line_items=[
@@ -30,17 +32,17 @@ def create_checkout_session(request):
                     'quantity': 1,
                 },
             ],
-            mode='payment',
+            mode='subscription',
             success_url=MY_DOMAIN +
             '/bookstore/success?session_id={CHECKOUT_SESSION_ID}',
             cancel_url=MY_DOMAIN + '/bookstore/cancel',
 
             # これは任意 (メタデータの追加指定ができる)
-            payment_intent_data={
-                "metadata": {
-                    "user_hogehoge": "Django Baby",
-                }
-            }
+            # payment_intent_data={
+            #     "metadata": {
+            #         "user_hogehoge": "Django Baby",
+            #     }
+            # }
         )
         print("決済ページのURLはこれ →" + checkout_session.url)
         return redirect(checkout_session.url)

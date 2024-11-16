@@ -4,6 +4,17 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# read .env file using django-environ
+import environ
+env = environ.Env()
+
+# reading .env file
+environ.Env.read_env(env_file=".env")
+
+STRIPE_KEY_PUBLIC=os.environ.get("STRIPE_KEY_PUBLIC")
+STRIPE_KEY_SECRET=os.environ.get("STRIPE_KEY_SECRET")
+
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
