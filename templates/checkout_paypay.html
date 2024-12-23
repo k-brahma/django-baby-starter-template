@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Buy cool new product</title>
+    <link rel="stylesheet" href="style.css"/>
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+<form id="payment-form">
+    <div id="payment-element">
+        <!--Stripe.js will create the Payment Element here-->
+    </div>
+    <button id="submit">Pay</button>
+    <div id="error-message"></div>
+</form>
+
+<script>
+    const stripe = Stripe("{{ STRIPE_PUBLISHABLE_KEY }}");
+
+    const options = {
+        clientSecret: "{{ client_secret }}",
+        // 外部支払い方法を指定
+        externalPaymentMethodTypes: ['external_paypay'],
+    };
+
+    const elements = stripe.elements(options);
+
+    const paymentElement = elements.create('payment');
+    paymentElement.mount('#payment-element');
+
+    // 支払い方法の選択を監視
+    let selectedPaymentMethod = null;
+
+    paymentElement.on('change', (event) => {
+        selectedPaymentMethod = event.value.type;
+    });
+
+    // フォームの送信処理
+    const form = document.getElementById('payment-form');
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        if (selectedPaymentMethod === 'external_paypay') {
+            // PayPay の決済ページにリダイレクト
+            window.location.href = "{% url 'bookstore:redirect_to_paypay' %}";
+        } else {
+            const {error} = await stripe.confirmPayment({
+                elements,
+                confirmParams: {
+                    return_url: 'https://yourdomain.com/bookstore/success',
+                },
+            });
+
+            if (error) {
+                const messageContainer = document.getElementById('error-message');
+                messageContainer.textContent = error.message;
+            }
+        }
+    });
+</script>
+</body>
+</html>

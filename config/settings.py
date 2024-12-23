@@ -14,7 +14,14 @@ environ.Env.read_env(env_file=".env")
 STRIPE_KEY_PUBLIC=os.environ.get("STRIPE_KEY_PUBLIC")
 STRIPE_KEY_SECRET=os.environ.get("STRIPE_KEY_SECRET")
 
+# settings.py
+STRIPE_PUBLISHABLE_KEY = os.getenv('STRIPE_KEY_PUBLIC')
+STRIPE_SECRET_KEY = os.getenv('STRIPE_KEY_SECRET')
+STRIPE_CURRENCY = 'jpy'
 
+PAYPAY_API_KEY = os.getenv('PAYPAY_API_KEY')
+PAYPAY_API_SECRET = os.getenv('PAYPAY_API_SECRET')
+PAYPAY_MERCHANT_ID = os.getenv('PAYPAY_MERCHANT_ID')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
